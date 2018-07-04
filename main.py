@@ -5,7 +5,7 @@ import os
 
 port = int(os.environ.get('PORT', 5000))
 
-token = "595047320:AAGV1T9Dg0Y1RVzjqxmvLE4eYdI-XeAnjyY"
+token = "********"
 bot = telebot.TeleBot(token)
 
 @bot.message_handler(func=lambda msg: True)
