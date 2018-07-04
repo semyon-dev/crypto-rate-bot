@@ -1,6 +1,9 @@
 import telebot
 import json
 import requests
+import os
+
+port = int(os.environ.get('PORT', 5000))
 
 token = "595047320:AAGV1T9Dg0Y1RVzjqxmvLE4eYdI-XeAnjyY"
 bot = telebot.TeleBot(token)
