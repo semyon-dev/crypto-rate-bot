@@ -5,7 +5,7 @@ import psycopg2
 
 port = int(os.environ.get('PORT', 5000))
 
-token = "595047320:AAEExMfMTuxZdS2JKdL0-b1dlor3jcpEbf8"
+token = "605519378:AAEd0WOYiatGI-Nrf9vK2DLgJdFVD2NpMZc"
 bot = telebot.TeleBot(token)
 
 con = psycopg2.connect("host='ec2-54-235-252-137.compute-1.amazonaws.com'dbname='db9rtffg17f3u2'user='qwcszqxjgxwgpe'password='2dcd995c072be1b1b4b3e3c4e6674629bf1cf8700dc26cad5ff0413194a9d07a'")
