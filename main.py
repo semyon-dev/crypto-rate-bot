@@ -5,11 +5,10 @@ import psycopg2
 
 port = int(os.environ.get('PORT', 5000))
 
-token = "TOKEN"
+token = "595047320:AAEExMfMTuxZdS2JKdL0-b1dlor3jcpEbf8"
 bot = telebot.TeleBot(token)
 
-
-con = psycopg2.connect("host=''")
+con = psycopg2.connect("host='ec2-54-235-252-137.compute-1.amazonaws.com'dbname='db9rtffg17f3u2'user='qwcszqxjgxwgpe'password='2dcd995c072be1b1b4b3e3c4e6674629bf1cf8700dc26cad5ff0413194a9d07a'")
 cursor = con.cursor()
 
 #cursor.execute("CREATE TABLE users (id int, mode varchar(10) )")
