@@ -1,3 +1,5 @@
+import time
+
 import telebot
 import requests
 import os
@@ -24,7 +26,9 @@ def greeting(message):
         cursor.execute('SELECT * FROM users WHERE id=%s', (chat_id,))
         user = (cursor.fetchone())
     except:
+        chat_id = '0'
         msg = 'error'
+        user = '0'
 
     if user == None:
 
@@ -82,4 +86,12 @@ def greeting(message):
 
         bot.send_message(message.chat.id, s)
 
-bot.polling()
+while True:
+    try:
+        bot.polling(none_stop=True)
+    except Exception as e:
+        time.sleep(15)
+
+# ConnectionError and ReadTimeout because of possible timout of the requests library
+# TypeError for moviepy errors
+# maybe there are others, therefore Exception
