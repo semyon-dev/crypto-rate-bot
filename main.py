@@ -11,19 +11,22 @@ bot = telebot.TeleBot(token)
 con = psycopg2.connect("host='ec2-54-235-252-137.compute-1.amazonaws.com'dbname='db9rtffg17f3u2'user='qwcszqxjgxwgpe'password='2dcd995c072be1b1b4b3e3c4e6674629bf1cf8700dc26cad5ff0413194a9d07a'")
 cursor = con.cursor()
 
-#cursor.execute("CREATE TABLE users (id int, mode varchar(10) )")
-
-#cursor.execute("DROP TABLE <name of table>") # удалить базу данных
+#cursor.execute("DROP TABLE users") # удалить базу данных
+#con.commit()
+#cursor.execute("CREATE TABLE users (id varchar(60), mode varchar(20) )")
+#con.commit()
 
 @bot.message_handler(func=lambda msg: True)
 def greeting(message):
 
-    cursor.execute('SELECT * FROM users WHERE id=%s', (message.chat.id,))
+    chat_id = str(message.chat.id)
+
+    cursor.execute('SELECT * FROM users WHERE id=%s', (chat_id,))
     user = (cursor.fetchone())
 
     if user == None:
 
-        cursor.execute("INSERT INTO users VALUES(%s,%s)",(message.chat.id,'own'))
+        cursor.execute("INSERT INTO users VALUES(%s,%s)",(chat_id,'own'))
         con.commit()
 
     try:
@@ -32,14 +35,14 @@ def greeting(message):
 
         if '/change_mode_chat' in text:
 
-            cursor.execute('''UPDATE users SET mode = %s WHERE id = %s''', ('chat', message.chat.id))
+            cursor.execute('''UPDATE users SET mode = %s WHERE id = %s''', ('chat',chat_id,))
             con.commit()
 
             s = 'mode was changed'
 
         elif '/change_mode_own' in text:
 
-            cursor.execute('''UPDATE users SET mode = %s WHERE id = %s''', ('own', message.chat.id ))
+            cursor.execute('''UPDATE users SET mode = %s WHERE id = %s''', ('own',chat_id))
             con.commit()
 
             s = 'mode was changed'
@@ -64,6 +67,7 @@ def greeting(message):
     except KeyError:
 
         if user[1] == 'own':
+
             s = "Not valid pair( /help )"
         else:
             s = None
