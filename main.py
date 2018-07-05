@@ -68,9 +68,14 @@ def greeting(message):
 
     except:
 
-        if user[1] == 'own':
-            s = "Not valid pair( /help )"
-        else:
+        try:
+
+            if user[1] == 'own':
+                s = "Not valid pair( /help )"
+            else:
+                s = None
+
+        except:
             s = None
 
     if s != None:
