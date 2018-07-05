@@ -27,6 +27,7 @@ def greeting(message):
         con.commit()
 
     try:
+
         text = message.text  # get user message
 
         if '/change_mode_chat' in text:
@@ -34,14 +35,22 @@ def greeting(message):
             cursor.execute('''UPDATE users SET mode = %s WHERE id = %s''', ('chat', message.chat.id))
             con.commit()
 
-            s='режим успешно изменен'
+            s = 'mode was changed'
 
         elif '/change_mode_own' in text:
 
             cursor.execute('''UPDATE users SET mode = %s WHERE id = %s''', ('own', message.chat.id ))
             con.commit()
 
-            s = 'Режим успешно изменен'
+            s = 'mode was changed'
+
+        elif text=='/start':
+
+            s = 'Hello!\nExample of commands: btc usd, btc rur, zec usd'
+
+        elif text == '/help':
+
+            s = 'Hello!Example of commands: btc usd, btc rur, zec usd\nThis rates are from WEX.Change bot mode for chat: /change_mode_chat (and for own /change_bot_own)'
 
         else:
             pair = text.replace(" ", "_")  # replace to get pair
@@ -50,16 +59,16 @@ def greeting(message):
             response = requests.get(url)
             list = (response.json()[pair])  # get list
             content = dict(list)  # convert to dictionary
-            s = "Курс " + text + " - " + str(content["last"])  # print ["last"] price
+            s = text + " - " + str(content["last"])  # print ["last"] price
 
     except KeyError:
 
         if user[1] == 'own':
-            s = "Ошибка!Вы неправильно указали пару!"
+            s = "Not valid pair( /help )"
         else:
-            s=None
+            s = None
 
-    if s!=None:
+    if s != None:
 
         bot.send_message(message.chat.id, s)
 
