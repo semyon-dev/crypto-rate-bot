@@ -19,10 +19,12 @@ cursor = con.cursor()
 @bot.message_handler(func=lambda msg: True)
 def greeting(message):
 
-    chat_id = str(message.chat.id)
-
-    cursor.execute('SELECT * FROM users WHERE id=%s', (chat_id,))
-    user = (cursor.fetchone())
+    try:
+        chat_id = str(message.chat.id)
+        cursor.execute('SELECT * FROM users WHERE id=%s', (chat_id,))
+        user = (cursor.fetchone())
+    except:
+        msg = 'error'
 
     if user == None:
 
@@ -64,10 +66,9 @@ def greeting(message):
             content = dict(list)  # convert to dictionary
             s = text + " - " + str(content["last"])  # print ["last"] price
 
-    except KeyError:
+    except:
 
         if user[1] == 'own':
-
             s = "Not valid pair( /help )"
         else:
             s = None
