@@ -1,3 +1,4 @@
+import time
 import telebot
 import requests
 import os
@@ -5,16 +6,11 @@ import psycopg2
 
 port = int(os.environ.get('PORT', 5000))
 
-token = "TOKEN"
+token = "YOUR TOKEN"
 bot = telebot.TeleBot(token)
 
-con = psycopg2.connect("host='your host'dbname='******'user='*******'password='your password'")
+con = psycopg2.connect("host='YOUR HOST'user='YOUR USER'password='PASS'")
 cursor = con.cursor()
-
-#cursor.execute("DROP TABLE users") # удалить базу данных
-#con.commit()
-#cursor.execute("CREATE TABLE users (id varchar(60), mode varchar(20) )")
-#con.commit()
 
 @bot.message_handler(func=lambda msg: True)
 def greeting(message):
@@ -24,7 +20,9 @@ def greeting(message):
         cursor.execute('SELECT * FROM users WHERE id=%s', (chat_id,))
         user = (cursor.fetchone())
     except:
+        chat_id = '0'
         msg = 'error'
+        user = '0'
 
     if user == None:
 
@@ -82,4 +80,12 @@ def greeting(message):
 
         bot.send_message(message.chat.id, s)
 
-bot.polling()
+while True:
+    try:
+        bot.polling(none_stop=True)
+    except Exception as e:
+        time.sleep(15)
+
+# ConnectionError and ReadTimeout because of possible timout of the requests library
+# TypeError for moviepy errors
+# maybe there are others, therefore Exception
