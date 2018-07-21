@@ -19,9 +19,9 @@ def get_rate_wex(text):
         response = requests.get(url)
         list = (response.json()[pair_wex])  # get list
         content = dict(list)  # convert to dictionary
-        rate = 'WEX: ' + text + ' - ' + str(round(float(content['last']),5))
+        rate = 'Wex: ' + text + ' - ' + str(round(float(content['last']),5))
     except:
-        rate = 'WEX : not found'
+        rate = 'Wex: not found'
 
     return rate
 
@@ -37,9 +37,9 @@ def get_rate_binance(text):
         response = requests.get(url)
         list = (response.json())  # get list
         content = dict(list)  # convert to dictionary
-        rate = 'BINANCE: ' + text + ' - ' + str(round(float(content['price']),5))
+        rate = 'Binance: ' + text + ' - ' + str(round(float(content['price']),5))
     except:
-        rate='BINANCE : not found'
+        rate='Binance: not found'
 
     return rate
 
