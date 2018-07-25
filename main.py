@@ -11,6 +11,11 @@ bot = telebot.TeleBot(token)
 
 help = 'Hello!Example of commands: btc usd, btc rur, zec usd and etc'
 
+def human_redable(number):
+    number = str(int(number))
+    number = ','.join(number[i:i + 3] for i in range(0, len(number), 3))
+    return number
+
 def get_rate_wex(text):
 
     try:
@@ -63,9 +68,9 @@ def greeting(message):
                 content = content['data']
                 marketcap = content['quotes']
                 marketcap = marketcap['USD']
-                marketcap = marketcap['total_market_cap']
-                response = 'Market capitalization: ' + str(round(float(marketcap, 5)))
+                marketcap = human_redable(marketcap['total_market_cap'])
 
+                response = 'Market capitalization: $ ' + marketcap
 
             else:
                 response=''
