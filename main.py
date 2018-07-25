@@ -26,7 +26,6 @@ def get_rate_wex(text):
     return rate
 
 def get_rate_binance(text):
-
     try:
         pair_binance = text.replace(' ', '').upper()
 
@@ -49,21 +48,35 @@ def greeting(message):
     try:
         text = message.text  # get user message
 
-        if text=='/start' or text=='/help':
+        if '/' in text:
 
-            response = help
+            if text=='/start' or text=='/help':
 
-        else:
-            response=''
-            response +=  get_rate_wex(text)
-            response += '\n'
-            response += get_rate_binance(text)
+                response = help
 
-            if response.count('not found')==2:
-                int('error')
+            elif text=='/marketcap':
 
-        print(response)
-        bot.send_message(message.chat.id, response)
+                url = 'https://api.coinmarketcap.com/v2/global/'
+                response = requests.get(url)
+                list = (response.json())  # get list
+                content = dict(list)  # convert to dictionary
+                content = content['data']
+                marketcap = content['quotes']
+                marketcap = marketcap['USD']
+                marketcap = marketcap['total_market_cap']
+                response = 'Market capitalization: ' + str(round(float(marketcap, 5)))
+
+
+            else:
+                response=''
+                response +=  get_rate_wex(text)
+                response += '\n'
+                response += get_rate_binance(text)
+
+                if response.count('not found')==2:
+                    int('error')
+
+            bot.send_message(message.chat.id, response)
 
     except Exception:
 
