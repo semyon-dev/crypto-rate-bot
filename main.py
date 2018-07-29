@@ -53,35 +53,69 @@ def greeting(message):
     try:
         text = message.text  # get user message
 
-        if '/' in text:
+        if text=='/start' or text=='/help':
 
-            if text=='/start' or text=='/help':
+            response = help
 
-                response = help
+        elif text=='/marketcap' or text=='/marketcap@crypto_costs_bot':
 
-            elif text=='/marketcap':
+            url = 'https://api.coinmarketcap.com/v2/global/'
+            response = requests.get(url)
+            list = (response.json())  # get list
+            content = dict(list)  # convert to dictionary
+            content = content['data']
+            marketcap = content['quotes']
+            marketcap = marketcap['USD']
+            marketcap = human_redable(marketcap['total_market_cap'])
 
-                url = 'https://api.coinmarketcap.com/v2/global/'
-                response = requests.get(url)
-                list = (response.json())  # get list
-                content = dict(list)  # convert to dictionary
-                content = content['data']
-                marketcap = content['quotes']
-                marketcap = marketcap['USD']
-                marketcap = human_redable(marketcap['total_market_cap'])
+            response = 'Market capitalization: $ ' + marketcap
 
-                response = 'Market capitalization: $ ' + marketcap
+        elif text == '/marketcap24h' or text == '/marketcap24h@crypto_costs_bot':
 
-            else:
-                response=''
-                response +=  get_rate_wex(text)
-                response += '\n'
-                response += get_rate_binance(text)
+            url = 'https://api.coinmarketcap.com/v2/global/'
+            response = requests.get(url)
+            list = (response.json())  # get list
+            content = dict(list)  # convert to dictionary
+            content = content['data']
+            volume24 = content['quotes']
+            volume24 = volume24['USD']
+            volume24 = human_redable(volume24['total_volume_24h'])
 
-                if response.count('not found')==2:
-                    int('error')
+            response = '24h Market volume: $ ' + volume24
 
-            bot.send_message(message.chat.id, response)
+        elif text == '/allcrypto' or text == '/allcrypto@crypto_costs_bot':
+
+            url = 'https://api.coinmarketcap.com/v2/global/'
+            response = requests.get(url)
+            list = (response.json())  # get list
+            content = dict(list)  # convert to dictionary
+            content = content['data']
+            allcrypto = content['active_cryptocurrencies']
+
+            response = 'Number of cryptocurrencies: ' + str(allcrypto)
+
+
+        elif text=='/btcdomimation' or text=='/btcdomimation@crypto_costs_bot':
+
+            url = 'https://api.coinmarketcap.com/v2/global/'
+            response = requests.get(url)
+            list = (response.json())  # get list
+            content = dict(list)  # convert to dictionary
+            content = content['data']
+            btcdom = content['bitcoin_percentage_of_market_cap']
+
+            response = 'Domination of bitcoin: ' + str(btcdom) + '%'
+
+        else:
+            response=''
+            response +=  get_rate_wex(text)
+            response += '\n'
+            response += get_rate_binance(text)
+
+            if response.count('not found')==2:
+                int('error')
+
+        bot.send_message(message.chat.id, response)
 
     except Exception:
 
@@ -89,7 +123,7 @@ def greeting(message):
         print('Error:\n', traceback.format_exc())
 
         if message.chat.type != 'group' and message.chat.type != 'supergroup':
-            response = 'not valid par'
+            response = 'not valid par or command'
             bot.send_message(message.chat.id, response)
 
 while True:
