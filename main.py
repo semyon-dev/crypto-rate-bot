@@ -9,7 +9,34 @@ port = int(os.environ.get('PORT', 5000))
 token = "605519378:AAEd0WOYiatGI-Nrf9vK2DLgJdFVD2NpMZc"
 bot = telebot.TeleBot(token)
 
-help = 'Hello!Example of commands: btc usd, btc rur, zec usd and etc'
+donate = '''
+You can support creator:
+Bitcoin:
+16gzM2uGF8WyfamRrwNQdFCpKBe8b7zvw9
+Ethereum:
+0x962f70bDb0B9Dccd86249385408359fb5136b27D
+Litecoin:
+LPvJjwK8hVumbDQ9ijGPS1AKSDqFy169fT
+Dash:
+XnNjRFm3XF5qfj1TPRhdcdGXVEDi5ZNhJV
+Zcash:
+t1HxXL9NGxmUsXDq1SBRmpXUMc4twbok4j1
+'''
+
+help = '''
+✅ This bot can give you crypto rates
+✅ Need help? /help
+✅ You can add bot to chat
+For example: btc usd, zec btc, etc
+—————————————
+If you need your own bot please contact me:
+Creator: @semyon_bitcoin
+—————————————
+Bitcoin donate:
+16gzM2uGF8WyfamRrwNQdFCpKBe8b7zvw9
+Litecoin donate:
+LPvJjwK8hVumbDQ9ijGPS1AKSDqFy169fT
+'''
 
 def human_redable(number):
     number = str(int(number))
@@ -19,7 +46,7 @@ def human_redable(number):
 def get_rate_wex(text):
 
     try:
-        pair_wex = text.replace(' ', '_')
+        pair_wex = text.replace(' ', '_').lower()
         url = 'https://wex.nz/api/3/ticker/' + pair_wex  # send json request
         response = requests.get(url)
         list = (response.json()[pair_wex])  # get list
@@ -56,6 +83,10 @@ def greeting(message):
         if text=='/start' or text=='/help':
 
             response = help
+
+        elif text=='/donate':
+
+            response =  donate
 
         elif text=='/marketcap' or text=='/marketcap@crypto_costs_bot':
 
