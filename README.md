@@ -1,5 +1,6 @@
 # Crypto Rate Bot
-This bot can give you rates from the Wex and Binance. Enjoy)
+This bot can give you rates from the Wex and Binance.
+Also bot take some information from CoinMarketCap. Enjoy it)
 \
 Also you can add bot to the chat
 \
