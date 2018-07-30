@@ -25,9 +25,24 @@ t1HxXL9NGxmUsXDq1SBRmpXUMc4twbok4j1
 
 help = '''
 ✅ This bot can give you crypto rates
+✅ You can add bot to chat
+Commands for example: btc usd, zec btc, etc
+—————————————
+If you need your own bot please contact me:
+Creator: @semyon_bitcoin
+—————————————
+Bitcoin donate:
+16gzM2uGF8WyfamRrwNQdFCpKBe8b7zvw9
+Litecoin donate:
+LPvJjwK8hVumbDQ9ijGPS1AKSDqFy169fT
+More donates - /donate
+'''
+
+start = '''
+✅ This bot can give you crypto rates
 ✅ Need help? /help
 ✅ You can add bot to chat
-For example: btc usd, zec btc, etc
+Commands for example: btc usd, zec btc, etc
 —————————————
 If you need your own bot please contact me:
 Creator: @semyon_bitcoin
@@ -38,10 +53,23 @@ Litecoin donate:
 LPvJjwK8hVumbDQ9ijGPS1AKSDqFy169fT
 '''
 
-def human_redable(number):
-    number = str(int(number))
-    number = ','.join(number[i:i + 3] for i in range(0, len(number), 3))
-    return number
+def human_redable(n):
+
+    sepdec = '.'
+    n = str(n)
+    if sepdec in n:
+        dollars, cents = n.split(sepdec)
+    else:
+        dollars, cents = n, None
+
+    r = []
+    for i, c in enumerate(reversed(str(dollars))):
+        if i and (not (i % 3)):
+            r.insert(0, ',')
+        r.insert(0, c)
+    out = ''.join(r)
+
+    return out
 
 def get_rate_wex(text):
 
@@ -80,11 +108,15 @@ def greeting(message):
     try:
         text = message.text  # get user message
 
-        if text=='/start' or text=='/help' or text== '/help@crypto_costs_bot':
+        if text == '/start':
+
+            response = start
+
+        elif text == '/help' or text== '/help@crypto_costs_bot':
 
             response = help
 
-        elif text=='/donate' or text=='/donate@crypto_costs_bot':
+        elif text == '/donate' or text=='/donate@crypto_costs_bot':
 
             response =  donate
 
