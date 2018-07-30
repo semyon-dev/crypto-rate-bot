@@ -80,11 +80,11 @@ def greeting(message):
     try:
         text = message.text  # get user message
 
-        if text=='/start' or text=='/help':
+        if text=='/start' or text=='/help' or text== '/help@crypto_costs_bot':
 
             response = help
 
-        elif text=='/donate':
+        elif text=='/donate' or text=='/donate@crypto_costs_bot':
 
             response =  donate
 
