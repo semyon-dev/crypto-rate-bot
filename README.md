@@ -14,4 +14,4 @@ Litecoin:
 LPvJjwK8hVumbDQ9ijGPS1AKSDqFy169fT
 \
 \
-![](https://github.com/SemyonNovikov/RateBot/blob/master/WexRateBot.png) 
+![](https://github.com/SemyonNovikov/RateBot/blob/master/screen.png) 
