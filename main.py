@@ -1,91 +1,164 @@
 import time
+import traceback
 import telebot
 import requests
 import os
-import psycopg2
 
 port = int(os.environ.get('PORT', 5000))
 
-token = "YOUR TOKEN"
+token = "my token"
 bot = telebot.TeleBot(token)
 
-con = psycopg2.connect("host='YOUR HOST'user='YOUR USER'password='PASS'")
-cursor = con.cursor()
+donate = '''
+You can support creator:
+Bitcoin:
+16gzM2uGF8WyfamRrwNQdFCpKBe8b7zvw9
+Ethereum:
+0x962f70bDb0B9Dccd86249385408359fb5136b27D
+Litecoin:
+LPvJjwK8hVumbDQ9ijGPS1AKSDqFy169fT
+Dash:
+XnNjRFm3XF5qfj1TPRhdcdGXVEDi5ZNhJV
+Zcash:
+t1HxXL9NGxmUsXDq1SBRmpXUMc4twbok4j1
+'''
+
+help = '''
+✅ This bot can give you crypto rates
+✅ Need help? /help
+✅ You can add bot to chat
+For example: btc usd, zec btc, etc
+—————————————
+If you need your own bot please contact me:
+Creator: @semyon_bitcoin
+—————————————
+Bitcoin donate:
+16gzM2uGF8WyfamRrwNQdFCpKBe8b7zvw9
+Litecoin donate:
+LPvJjwK8hVumbDQ9ijGPS1AKSDqFy169fT
+'''
+
+def human_redable(number):
+    number = str(int(number))
+    number = ','.join(number[i:i + 3] for i in range(0, len(number), 3))
+    return number
+
+def get_rate_wex(text):
+
+    try:
+        pair_wex = text.replace(' ', '_').lower()
+        url = 'https://wex.nz/api/3/ticker/' + pair_wex  # send json request
+        response = requests.get(url)
+        list = (response.json()[pair_wex])  # get list
+        content = dict(list)  # convert to dictionary
+        rate = 'Wex: ' + text + ' - ' + str(round(float(content['last']),5))
+    except:
+        rate = 'Wex: not found'
+
+    return rate
+
+def get_rate_binance(text):
+    try:
+        pair_binance = text.replace(' ', '').upper()
+
+        if 'USD' in pair_binance:
+            pair_binance = pair_binance.replace('USD','USDT')
+
+        url = 'https://api.binance.com/api/v3/ticker/price?symbol=' + pair_binance  # send json request
+        response = requests.get(url)
+        list = (response.json())  # get list
+        content = dict(list)  # convert to dictionary
+        rate = 'Binance: ' + text + ' - ' + str(round(float(content['price']),5))
+    except:
+        rate='Binance: not found'
+
+    return rate
 
 @bot.message_handler(func=lambda msg: True)
 def greeting(message):
 
     try:
-        chat_id = str(message.chat.id)
-        cursor.execute('SELECT * FROM users WHERE id=%s', (chat_id,))
-        user = (cursor.fetchone())
-    except:
-        chat_id = '0'
-        msg = 'error'
-        user = '0'
-
-    if user == None:
-
-        cursor.execute("INSERT INTO users VALUES(%s,%s)",(chat_id,'own'))
-        con.commit()
-
-    try:
-
         text = message.text  # get user message
 
-        if '/change_mode_chat' in text:
+        if text=='/start' or text=='/help' or text== '/help@crypto_costs_bot':
 
-            cursor.execute('''UPDATE users SET mode = %s WHERE id = %s''', ('chat',chat_id,))
-            con.commit()
+            response = help
 
-            s = 'mode was changed'
+        elif text=='/donate' or text=='/donate@crypto_costs_bot':
 
-        elif '/change_mode_own' in text:
+            response =  donate
 
-            cursor.execute('''UPDATE users SET mode = %s WHERE id = %s''', ('own',chat_id))
-            con.commit()
+        elif text=='/marketcap' or text=='/marketcap@crypto_costs_bot':
 
-            s = 'mode was changed'
+            url = 'https://api.coinmarketcap.com/v2/global/'
+            response = requests.get(url)
+            list = (response.json())  # get list
+            content = dict(list)  # convert to dictionary
+            content = content['data']
+            marketcap = content['quotes']
+            marketcap = marketcap['USD']
+            marketcap = human_redable(marketcap['total_market_cap'])
 
-        elif text=='/start':
+            response = 'Market capitalization: $ ' + marketcap
 
-            s = 'Hello!\nExample of commands: btc usd, btc rur, zec usd'
+        elif text == '/marketcap24h' or text == '/marketcap24h@crypto_costs_bot':
 
-        elif text == '/help':
+            url = 'https://api.coinmarketcap.com/v2/global/'
+            response = requests.get(url)
+            list = (response.json())  # get list
+            content = dict(list)  # convert to dictionary
+            content = content['data']
+            volume24 = content['quotes']
+            volume24 = volume24['USD']
+            volume24 = human_redable(volume24['total_volume_24h'])
 
-            s = 'Hello!Example of commands: btc usd, btc rur, zec usd\nThis rates are from WEX.Change bot mode for chat: /change_mode_chat (and for own /change_bot_own)'
+            response = '24h Market volume: $ ' + volume24
+
+        elif text == '/allcrypto' or text == '/allcrypto@crypto_costs_bot':
+
+            url = 'https://api.coinmarketcap.com/v2/global/'
+            response = requests.get(url)
+            list = (response.json())  # get list
+            content = dict(list)  # convert to dictionary
+            content = content['data']
+            allcrypto = content['active_cryptocurrencies']
+
+            response = 'Number of cryptocurrencies: ' + str(allcrypto)
+
+
+        elif text=='/btcdomimation' or text=='/btcdomimation@crypto_costs_bot':
+
+            url = 'https://api.coinmarketcap.com/v2/global/'
+            response = requests.get(url)
+            list = (response.json())  # get list
+            content = dict(list)  # convert to dictionary
+            content = content['data']
+            btcdom = content['bitcoin_percentage_of_market_cap']
+
+            response = 'Domination of bitcoin: ' + str(btcdom) + '%'
 
         else:
-            pair = text.replace(" ", "_")  # replace to get pair
-            url = 'https://wex.nz/api/3/ticker/' + pair  # send json request
+            response=''
+            response +=  get_rate_wex(text)
+            response += '\n'
+            response += get_rate_binance(text)
 
-            response = requests.get(url)
-            list = (response.json()[pair])  # get list
-            content = dict(list)  # convert to dictionary
-            s = text + " - " + str(content["last"])  # print ["last"] price
+            if response.count('not found')==2:
+                int('error')
 
-    except:
+        bot.send_message(message.chat.id, response)
 
-        try:
+    except Exception:
 
-            if user[1] == 'own':
-                s = "Not valid pair( /help )"
-            else:
-                s = None
+        print('------------------------------------')
+        print('Error:\n', traceback.format_exc())
 
-        except:
-            s = None
-
-    if s != None:
-
-        bot.send_message(message.chat.id, s)
+        if message.chat.type != 'group' and message.chat.type != 'supergroup':
+            response = 'not valid par or command'
+            bot.send_message(message.chat.id, response)
 
 while True:
     try:
         bot.polling(none_stop=True)
     except Exception as e:
         time.sleep(15)
-
-# ConnectionError and ReadTimeout because of possible timout of the requests library
-# TypeError for moviepy errors
-# maybe there are others, therefore Exception
